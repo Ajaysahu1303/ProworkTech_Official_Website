@@ -1,0 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+/* Note: @config and @apply are standard in Tailwind v4; ignore IDE lint warnings */
+@config "../tailwind.config.js";
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Primary Colors - Forest Green from Logo */
+  --color-primary-50: #edf7f4;
+  --color-primary-100: #d1ebe3;
+  --color-primary-500: #325d4f;
+  --color-primary-600: #2a4e42;
+  --color-primary-700: #223f36;
+  --color-primary-800: #1a3029;
+  --color-primary-900: #12211c;
+
+  /* Secondary/Accent - Sunny Yellow from Logo */
+  --color-accent-50: #fff9db;
+  --color-accent-100: #fff3bf;
+  --color-accent-500: #fdd835;
+  --color-accent-600: #fbc02d;
+
+  /* Neutral Palette */
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+
+  /* Global Colors */
+  --color-text-primary: var(--color-primary-900);
+  --color-text-secondary: var(--color-primary-700);
+  --color-text-muted: var(--color-primary-500);
+  --color-border: var(--color-primary-100);
+  --color-surface: #ffffff;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-[var(--color-primary-900)] antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold tracking-tight text-[var(--color-primary-900)];
+  }
+}
+
+@layer components {
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+    @apply bg-primary-400 text-white shadow-lg shadow-primary-600/20 hover:bg-primary-700 hover:shadow-xl hover:shadow-primary-600/30;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+    @apply border-2 border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+    @apply text-slate-600 hover:bg-slate-100 hover:text-slate-900;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl border border-slate-200 shadow-sm transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1;
+  }
+
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-300;
+  }
+
+  .section-padding {
+    @apply py-20 lg:py-32;
+  }
+
+  .heading-xl {
+    @apply text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-primary-700;
+  }
+
+  .heading-lg {
+    @apply text-3xl md:text-4xl font-bold text-primary-700;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-700 to-accent-700;
+  }
+
+  .bg-grid-slate-100 {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(241 245 249 / 1)'%3E%3Cpath d='M0 .5H31.5V32'/%3E%3C/svg%3E");
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full border-2 border-slate-100 hover:bg-slate-400;
+}
