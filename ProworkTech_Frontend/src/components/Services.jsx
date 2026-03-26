@@ -146,8 +146,12 @@ const Services = ({ limit, showMoreButton = false }) => {
               className="group relative"
             >
               <div className="card h-full p-8 border border-slate-100 hover:border-primary-100 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-600/5 group-hover:-translate-y-1">
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-colors duration-300 ${service.color || 'bg-primary-50 text-primary-600'}`}>
-                  {typeof service.icon === 'string' ? (iconMap[service.icon] || <Pentagon />) : service.icon}
+                <div className={`w-14 h-14 overflow-hidden rounded-2xl flex items-center justify-center mb-6 transition-colors duration-300 ${service.color || 'bg-primary-50 text-primary-600'}`}>
+                  {typeof service.icon === 'string' ? (
+                      service.icon.startsWith('http') || service.icon.startsWith('/') 
+                      ? <img src={service.icon} alt={service.title} className="w-8 h-8 object-contain" /> 
+                      : (iconMap[service.icon] || <Pentagon />)
+                  ) : service.icon}
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 mb-4">{service.title}</h3>
                 <p className="text-slate-600 mb-8 leading-relaxed">

@@ -98,6 +98,9 @@ const ManageTeam = () => {
 
             const response = await fetch(url, {
                 method: method,
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                },
                 body: data
             });
 
@@ -128,7 +131,10 @@ const ManageTeam = () => {
         if (!window.confirm("Are you sure you want to remove this member?")) return;
         try {
             const response = await fetch(`http://localhost:5000/api/team/${id}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                }
             });
             if (response.ok) {
                 setTeam(team.filter(m => m._id !== id));

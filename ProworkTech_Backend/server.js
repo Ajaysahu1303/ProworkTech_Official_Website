@@ -6,6 +6,11 @@ import mongoose from "mongoose";
 import multer from "multer";
 import path from "path";
 import { fileURLToPath } from 'url';
+import TeamMember from "./models/TeamMember.js";
+import ProworkAdmin from "./models/ProworkAdmin.js";
+import Service from "./models/Service.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 dotenv.config();
 
@@ -34,16 +39,23 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// --- SERVICE SCHEMA ---
-const serviceSchema = new mongoose.Schema({
-    title: { type: String, required: true },
-    desc: { type: String, required: true },
-    icon: { type: String, required: true }, // Icon name or image URL
-    color: { type: String, default: "bg-primary-50 text-primary-600" },
-    link: { type: String, default: "/services" }
-}, { timestamps: true });
+// Middleware to protect routes
+const verifyAdmin = (req, res, next) => {
+    const token = req.headers.authorization?.split(" ")[1];
 
-const Service = mongoose.model("Service", serviceSchema);
+    if (!token) {
+        return res.status(401).json({ message: "Access Denied. No token provided." });
+    }
+
+    try {
+        const verified = jwt.verify(token, process.env.JWT_SECRET);
+        req.admin = verified;
+        next();
+    } catch (err) {
+        res.status(403).json({ message: "Invalid Token" });
+    }
+};
+
 
 // --- API ENDPOINTS ---
 
@@ -62,7 +74,7 @@ app.get("/api/services", async (req, res) => {
 });
 
 // Add a new service
-app.post("/api/services", upload.single('iconFile'), async (req, res) => {
+app.post("/api/services", verifyAdmin, upload.single('iconFile'), async (req, res) => {
     try {
         const { title, desc, icon, color, link } = req.body;
         const iconPath = req.file ? `http://localhost:5000/uploads/${req.file.filename}` : icon;
@@ -83,7 +95,7 @@ app.post("/api/services", upload.single('iconFile'), async (req, res) => {
 });
 
 // Update a service
-app.put("/api/services/:id", upload.single('iconFile'), async (req, res) => {
+app.put("/api/services/:id", verifyAdmin, upload.single('iconFile'), async (req, res) => {
     try {
         const { title, desc, icon, color, link } = req.body;
         const updateData = { title, desc, color, link };
@@ -102,7 +114,7 @@ app.put("/api/services/:id", upload.single('iconFile'), async (req, res) => {
 });
 
 // Delete a service
-app.delete("/api/services/:id", async (req, res) => {
+app.delete("/api/services/:id", verifyAdmin, async (req, res) => {
     try {
         const { id } = req.params;
         console.log(`DELETE request received for service ID: ${id}`);
@@ -119,22 +131,6 @@ app.delete("/api/services/:id", async (req, res) => {
     }
 });
 
-// --- TEAM MEMBER SCHEMA ---
-const teamMemberSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    role: { type: String, required: true },
-    image: { type: String, required: true },
-    email: { type: String },
-    bio: { type: String },
-    status: { type: String, default: "Active" },
-    social: {
-        linkedin: { type: String, default: "#" },
-        twitter: { type: String, default: "#" },
-        mail: { type: String, default: "#" }
-    }
-}, { timestamps: true });
-
-const TeamMember = mongoose.model("TeamMember", teamMemberSchema);
 
 // --- API ENDPOINTS ---
 
@@ -153,10 +149,10 @@ app.get("/api/team", async (req, res) => {
 });
 
 // Add a new team member with image
-app.post("/api/team", upload.single('imageFile'), async (req, res) => {
+app.post("/api/team", verifyAdmin, upload.single('imageFile'), async (req, res) => {
     try {
         const { name, role, email, bio, status, linkedin, twitter, image } = req.body;
-        
+
         // Use uploaded file path if available, else use provided image URL
         const imagePath = req.file ? `http://localhost:5000/uploads/${req.file.filename}` : image;
 
@@ -183,10 +179,10 @@ app.post("/api/team", upload.single('imageFile'), async (req, res) => {
 });
 
 // Update a team member
-app.put("/api/team/:id", upload.single('imageFile'), async (req, res) => {
+app.put("/api/team/:id", verifyAdmin, upload.single('imageFile'), async (req, res) => {
     try {
         const { name, role, email, bio, status, linkedin, twitter, image } = req.body;
-        
+
         const updateData = {
             name,
             role,
@@ -207,8 +203,8 @@ app.put("/api/team/:id", upload.single('imageFile'), async (req, res) => {
         }
 
         const updatedMember = await TeamMember.findByIdAndUpdate(
-            req.params.id, 
-            updateData, 
+            req.params.id,
+            updateData,
             { new: true }
         );
 
@@ -224,7 +220,7 @@ app.put("/api/team/:id", upload.single('imageFile'), async (req, res) => {
 });
 
 // Delete a member
-app.delete("/api/team/:id", async (req, res) => {
+app.delete("/api/team/:id", verifyAdmin, async (req, res) => {
     try {
         await TeamMember.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: "Member removed" });
@@ -232,6 +228,34 @@ app.delete("/api/team/:id", async (req, res) => {
         res.status(500).json({ message: "Error deleting member" });
     }
 });
+
+//Admin login
+app.post("/api/admin/login", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Find admin by email
+        const admin = await ProworkAdmin.findOne({ email });
+        if (!admin) return res.status(404).json({ message: "Admin not found" });
+        // Check password match
+        const isMatch = await bcrypt.compare(password, admin.password);
+        if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+        // Generate JWT token
+        const token = jwt.sign(
+            { id: admin._id, email: admin.email },
+            process.env.JWT_SECRET,
+            { expiresIn: '1d' } // Token expires in 1 day
+        );
+        res.status(200).json({ token, message: "Logged in successfully" });
+    } catch (err) {
+        res.status(500).json({ message: "Server error", error: err.message });
+    }
+});
+
+
+
+
+// Contact
 
 app.post("/api/contact", async (req, res) => {
     try {
@@ -246,7 +270,7 @@ app.post("/api/contact", async (req, res) => {
                 pass: process.env.EMAIL_PASS
             },
         });
-        
+
         await transporter.sendMail({
             from: process.env.EMAIL_USER,
             to: process.env.RECEIVER_EMAIL,

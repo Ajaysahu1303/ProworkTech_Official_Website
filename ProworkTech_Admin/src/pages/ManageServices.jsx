@@ -97,7 +97,13 @@ const ManageServices = () => {
 
             const method = editingId ? 'PUT' : 'POST';
 
-            const response = await fetch(url, { method, body: data });
+            const response = await fetch(url, { 
+                method, 
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                },
+                body: data 
+            });
 
             if (response.ok) {
                 await fetchServices();
@@ -117,7 +123,12 @@ const ManageServices = () => {
 
         if (!window.confirm("Delete this service?")) return;
         try {
-            const response = await fetch(`http://localhost:5000/api/services/${id}`, { method: 'DELETE' });
+            const response = await fetch(`http://localhost:5000/api/services/${id}`, { 
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                }
+            });
             console.log("Delete response status:", response.status);
             if (response.ok) {
                 setServices(prev => prev.filter(s => s._id !== id));
@@ -168,6 +179,39 @@ const ManageServices = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <AnimatePresence>
+                    {!loading && filteredServices.map((service, idx) => (
+                        <motion.div
+                            key={service._id}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden group p-6 flex flex-col gap-4 relative hover:shadow-xl transition-all"
+                        >
+                            <div className="flex justify-between items-start">
+                                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${service.color}`}>
+                                    {service.icon?.startsWith('http') ? (
+                                        <img src={service.icon} alt={service.title} className="w-8 h-8 object-contain" />
+                                    ) : (
+                                        availableIcons[service.icon] || <Pentagon size={24} />
+                                    )}
+                                </div>
+                                <div className="flex gap-2">
+                                    <button onClick={() => handleEditClick(service)} className="p-2 bg-slate-50 text-slate-400 hover:text-primary-600 rounded-xl transition-colors">
+                                        <Edit2 size={16} />
+                                    </button>
+                                    <button onClick={(e) => handleDelete(e, service._id)} className="p-2 bg-slate-50 text-slate-400 hover:text-red-500 rounded-xl transition-colors">
+                                        <Trash2 size={16} />
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-black text-slate-900 mb-2">{service.title}</h3>
+                                <p className="text-slate-500 text-sm line-clamp-3 leading-relaxed">{service.desc}</p>
+                            </div>
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
 
                 {!loading && (
                     <button onClick={() => setIsModalOpen(true)} className="border-2 border-dashed border-slate-200 rounded-3xl flex flex-col items-center justify-center p-8 text-slate-400 hover:border-primary-300 hover:bg-primary-50/20 transition-all min-h-[250px]">

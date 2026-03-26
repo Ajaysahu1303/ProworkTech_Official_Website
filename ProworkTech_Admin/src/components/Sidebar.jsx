@@ -59,7 +59,10 @@ const AdminSidebar = () => {
                         <p className="text-xs text-slate-500 truncate">admin@proworktech.com</p>
                     </div>
                 </div>
-                <button className="flex items-center gap-3 w-full p-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
+                <button onClick={() => {
+                    localStorage.removeItem("adminToken");
+                    window.location.href = "/login";
+                }} className="flex items-center gap-3 w-full p-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
                     <LogOut size={20} />
                     <span className="text-sm font-medium">Logout System</span>
                 </button>
