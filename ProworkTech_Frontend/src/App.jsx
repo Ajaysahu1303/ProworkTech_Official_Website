@@ -2,15 +2,15 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
-import Home from './Pages/Home';
-import About from './Pages/About';
-import Services from './Pages/Services';
-import Contact from './Pages/Contact';
-import Team from './Pages/Team';
-import NotFound from './Pages/NotFound';
-import Demo from './Pages/Demo';
-import PrivacyPolicy from './Pages/PrivacyPolicy';
-import TermsOfService from './Pages/TermsOfService';
+import Home from './pages/Home';
+import About from './pages/About';
+import Services from './pages/Services';
+import Contact from './pages/Contact';
+import Team from './pages/Team';
+import NotFound from './pages/NotFound';
+import Demo from './pages/Demo';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 
 function App() {
   return (

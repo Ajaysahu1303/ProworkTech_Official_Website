@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Primary Colors - Forest Green from Logo */
+  --color-primary-50: #edf7f4;
+  --color-primary-100: #d1ebe3;
+  --color-primary-400: #3c7a67;
+  --color-primary-500: #325d4f;
+  --color-primary-600: #2a4e42;
+  --color-primary-700: #223f36;
+  --color-primary-800: #1a3029;
+  --color-primary-900: #12211c;
+
+  /* Secondary/Accent - Sunny Yellow from Logo */
+  --color-accent-50: #fff9db;
+  --color-accent-100: #fff3bf;
+  --color-accent-500: #fdd835;
+  --color-accent-600: #fbc02d;
+
+  /* Neutral Palette */
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+
+  /* Global Colors */
+  --color-text-primary: var(--color-primary-900);
+  --color-text-secondary: var(--color-primary-700);
+  --color-text-muted: var(--color-primary-500);
+  --color-border: var(--color-primary-100);
+  --color-surface: #ffffff;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-[var(--color-primary-900)] antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold tracking-tight text-[var(--color-primary-900)];
+  }
+}
