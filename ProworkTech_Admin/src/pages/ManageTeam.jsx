@@ -5,6 +5,8 @@ import {
     Linkedin, Twitter, Mail, ExternalLink, Filter, CheckCircle2, X,
     Upload, Loader2
 } from 'lucide-react';
+import { secureApiFetch } from '../utils/secureApi';
+import toast from 'react-hot-toast';
 
 const ManageTeam = () => {
     const [team, setTeam] = useState([]);
@@ -90,26 +92,23 @@ const ManageTeam = () => {
                 data.append('image', formData.image);
             }
 
-            const url = editingMemberId 
-                ? `http://localhost:5000/api/team/${editingMemberId}`
-                : 'http://localhost:5000/api/team';
-            
             const method = editingMemberId ? 'PUT' : 'POST';
 
-            const response = await fetch(url, {
+            const response = await secureApiFetch(editingMemberId ? `/api/team/${editingMemberId}` : '/api/team', {
                 method: method,
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                },
                 body: data
             });
 
             if (response.ok) {
+                toast.success(editingMemberId ? "Team member updated successfully!" : "Team member added successfully!");
                 await fetchTeam();
                 closeModal();
+            } else {
+                toast.error(editingMemberId ? "Failed to update member" : "Failed to add member");
             }
         } catch (error) {
-            alert(editingMemberId ? "Failed to update member" : "Failed to add member");
+            console.error("Save error:", error);
+            toast.error("Network error while saving");
         } finally {
             setIsSubmitting(false);
         }
@@ -130,17 +129,18 @@ const ManageTeam = () => {
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to remove this member?")) return;
         try {
-            const response = await fetch(`http://localhost:5000/api/team/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                }
+            const response = await secureApiFetch(`/api/team/${id}`, {
+                method: 'DELETE'
             });
             if (response.ok) {
-                setTeam(team.filter(m => m._id !== id));
+                toast.success("Team member removed successfully!");
+                setTeam(prev => prev.filter(m => m._id !== id));
+            } else {
+                toast.error("Failed to delete member");
             }
         } catch (error) {
-            alert("Failed to delete member");
+            console.error("Delete error:", error);
+            toast.error("Network error while deleting");
         }
     };
 

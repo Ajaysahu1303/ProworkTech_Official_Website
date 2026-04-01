@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, Users, MessageSquare, Settings, LogOut, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Briefcase, Users, MessageSquare, Settings, LogOut, ChevronRight, Star, Image as ImageIcon } from 'lucide-react';
 import logo from '../assets/logo_prowork.png';
 
 const AdminSidebar = () => {
@@ -8,6 +8,8 @@ const AdminSidebar = () => {
         { path: '/', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
         { path: '/services', icon: <Briefcase size={20} />, label: 'Services' },
         { path: '/team', icon: <Users size={20} />, label: 'Team Members' },
+        { path: '/testimonials', icon: <Star size={20} />, label: 'Testimonials' },
+        { path: '/clients', icon: <ImageIcon size={20} />, label: 'Client Logos' },
         { path: '/submissions', icon: <MessageSquare size={20} />, label: 'Submissions' },
         { path: '/settings', icon: <Settings size={20} />, label: 'Settings' },
     ];

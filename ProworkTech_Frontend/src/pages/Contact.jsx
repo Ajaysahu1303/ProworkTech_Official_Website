@@ -1,10 +1,15 @@
 import React from 'react';
 import ContactModule from '../components/Contact';
 import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 
 const Contact = () => {
   return (
     <div className="bg-slate-50">
+      <Helmet>
+        <title>Contact Us | Get in Touch with Prowork Tech</title>
+        <meta name="description" content="Ready to grow your business? Contact Prowork Tech, Prayagraj's specialized web development and marketing agency to discuss your project." />
+      </Helmet>
       <section className="relative pt-32 pb-20 overflow-hidden bg-primary-750">
         <div className="absolute inset-0 bg-grid-white/[0.05] -z-10"></div>
         <div className="absolute top-0 right-0 w-1/2 h-full bg-primary-500/10 skew-x-12 translate-x-1/4"></div>

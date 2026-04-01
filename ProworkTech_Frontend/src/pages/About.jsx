@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Target, Users, Zap, Shield, Rocket, Heart, CheckCircle2 } from 'lucide-react';
 import CTA from '../components/CTA';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 const values = [
   {
@@ -47,6 +48,10 @@ const About = () => {
 
   return (
     <div className="bg-white min-h-screen">
+      <Helmet>
+        <title>About Us | Prowork Tech - Prayagraj's Growth Partner</title>
+        <meta name="description" content="Learn about Prowork Tech, an agile team of digital architects and marketing specialists based in Prayagraj. We deliver transparent, data-driven strategies for local growth." />
+      </Helmet>
       {/* Page Hero */}
       <section className="relative pt-32 pb-20 overflow-hidden bg-primary-750 text-white">
         <div className="absolute inset-0 bg-grid-white/[0.05] -z-10"></div>

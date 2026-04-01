@@ -2,10 +2,15 @@ import React from 'react';
 import TeamModule from '../components/Team';
 import CTA from '../components/CTA';
 import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 
 const Team = () => {
   return (
     <div className="bg-white">
+      <Helmet>
+        <title>Our Team | Prayagraj's Top Digital Minds</title>
+        <meta name="description" content="Meet the core team behind Prowork Tech. Our experts specialize in web development, app development, and social media marketing in Prayagraj." />
+      </Helmet>
       {/* Page Hero */}
       <section className="relative pt-32 pb-20 overflow-hidden bg-primary-750 shadow-inner">
         <div className="absolute inset-0 bg-grid-white/[0.05] -z-10"></div>

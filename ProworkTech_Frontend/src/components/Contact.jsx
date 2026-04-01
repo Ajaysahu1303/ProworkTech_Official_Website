@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Phone, Send, ChevronRight } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const Contact = () => {
   const location = useLocation();
@@ -45,13 +46,14 @@ const Contact = () => {
       if (response.ok) {
         setSubmitted(true);
         setFormData({ name: '', email: '', service: 'Social Media Marketing', message: '' });
+        toast.success("Message sent successfully!");
         setTimeout(() => setSubmitted(false), 5000);
       } else {
-        alert("Failed to send your message. Please try again.");
+        toast.error("Failed to send your message. Please try again.");
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      alert("An error occurred while sending the message.");
+      toast.error("An error occurred while sending the message.");
     } finally {
       setIsSubmitting(false);
     }

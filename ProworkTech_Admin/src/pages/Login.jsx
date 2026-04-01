@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, Mail, ChevronRight, ShieldCheck, Asterisk } from 'lucide-react';
 import logo from '../assets/logo_prowork.png';
@@ -9,6 +9,35 @@ const Login = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    // Show session expiry message if redirected from expired token
+    useEffect(() => {
+        const loginMessage = sessionStorage.getItem("loginMessage");
+        if (loginMessage) {
+            setError(loginMessage);
+            sessionStorage.removeItem("loginMessage");
+        }
+    }, []);
+
+    // If already authenticated, redirect to dashboard
+    useEffect(() => {
+        const checkExistingSession = async () => {
+            const token = localStorage.getItem("adminToken");
+            if (!token) return;
+
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/verify', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    navigate('/', { replace: true });
+                }
+            } catch (err) {
+                // Server down or invalid token — stay on login
+            }
+        };
+        checkExistingSession();
+    }, [navigate]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -45,14 +74,14 @@ const Login = () => {
             <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent-500/20 blur-[100px] rounded-full pointer-events-none" />
 
             <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 bg-white/60 backdrop-blur-xl border border-white/50 shadow-2xl rounded-3xl overflow-hidden relative z-10 mx-4">
-                
+
                 {/* Visual Side */}
                 <div className="hidden md:flex flex-col justify-between bg-slate-900 text-white p-12 relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary-900/50 to-slate-900 z-0"></div>
                     <div className="absolute -right-[20%] top-[10%] w-[80%] h-[80%] bg-primary-600/30 blur-[80px] rounded-full z-0 font-bold mix-blend-screen" />
-                    
+
                     <div className="relative z-10 flex items-center gap-3">
-                         <div className="h-10 w-10 bg-white rounded-lg flex items-center justify-center overflow-hidden shrink-0 shadow-lg">
+                        <div className="h-10 w-10 bg-white rounded-lg flex items-center justify-center overflow-hidden shrink-0 shadow-lg">
                             <img src={logo} alt="Logo" className="h-full w-auto object-contain" />
                         </div>
                         <div>
@@ -63,7 +92,7 @@ const Login = () => {
 
                     <div className="relative z-10 mt-12">
                         <ShieldCheck size={48} className="text-primary-400 mb-6 drop-shadow-md" />
-                        <h2 className="text-4xl font-black mb-4 leading-tight">Secure <br/> Admin Access</h2>
+                        <h2 className="text-4xl font-white text-primary-50 mb-4 leading-tight">Secure <br /> Admin Access</h2>
                         <p className="text-slate-400 font-medium text-lg max-w-xs">
                             Manage your digital ecosystem, view analytics, and update content in one unified space.
                         </p>

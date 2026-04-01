@@ -4,6 +4,8 @@ import {
     Plus, Search, Edit2, Trash2, Globe, Smartphone, Share2,
     BarChart3, Palette, Pentagon, Zap, Shield, X, Upload, Loader2, ArrowRight
 } from 'lucide-react';
+import { secureApiFetch } from '../utils/secureApi';
+import toast from 'react-hot-toast';
 
 const availableIcons = {
     Globe: <Globe size={24} />,
@@ -91,26 +93,23 @@ const ManageServices = () => {
                 data.append('icon', formData.icon);
             }
 
-            const url = editingId
-                ? `http://localhost:5000/api/services/${editingId}`
-                : 'http://localhost:5000/api/services';
-
             const method = editingId ? 'PUT' : 'POST';
 
-            const response = await fetch(url, { 
+            const response = await secureApiFetch(editingId ? `/api/services/${editingId}` : '/api/services', { 
                 method, 
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                },
                 body: data 
             });
 
             if (response.ok) {
+                toast.success(editingId ? "Service updated successfully!" : "Service created successfully!");
                 await fetchServices();
                 closeModal();
+            } else {
+                toast.error("Failed to save service");
             }
         } catch (error) {
-            alert("Failed to save service");
+            console.error("Save error:", error);
+            toast.error("Failed to save service due to network error");
         } finally {
             setIsSubmitting(false);
         }
@@ -118,27 +117,23 @@ const ManageServices = () => {
 
     const handleDelete = async (e, id) => {
         if (e) e.stopPropagation();
-        console.log("Attempting to delete service with ID:", id);
-        if (!id) return alert("Error: Service ID is missing");
+        if (!id) return toast.error("Error: Service ID is missing");
 
         if (!window.confirm("Delete this service?")) return;
         try {
-            const response = await fetch(`http://localhost:5000/api/services/${id}`, { 
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                }
+            const response = await secureApiFetch(`/api/services/${id}`, { 
+                method: 'DELETE'
             });
-            console.log("Delete response status:", response.status);
             if (response.ok) {
                 setServices(prev => prev.filter(s => s._id !== id));
+                toast.success('Service deleted successfully!');
             } else {
                 const errorData = await response.json();
-                alert(`Delete failed: ${errorData.message}`);
+                toast.error(`Delete failed: ${errorData.message}`);
             }
         } catch (error) {
             console.error("Delete error:", error);
-            alert("Delete failed due to network error");
+            toast.error("Delete failed due to network error");
         }
     };
 
